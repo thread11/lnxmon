@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- <meta http-equiv="refresh" content="60"> -->
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux Monitor</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<link rel="stylesheet" href="static/pure-min.css" />
+<script type="text/javascript" src="static/echarts.min.js"></script>
+<style>
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  /*
+  font-family: Vernada, Arial, Helvetica, Sans-serif;
+  color: #404040;
+  */
+  font-size: 12px;
+}
+
+a {
+  text-decoration: none;
+}
+
+table {
+  width: 100%;
+}
+
+table th {
+  text-align: center;
+}
+
+table td {
+  text-align: center;
+}
+
+table a {
+  text-decoration: underline;
+  color: #404040;
+}
+table a:hover {
+  text-decoration: underline;
+}
+
+.divBlock {
+  margin: 5px 10px;
+}
+
+#header {
+  /*
+  background-color: #428bca;
+  */
+  background-color: #0078e7;
+  display: flex;
+  flex-direction: row;
+  height: 36px;
+  line-height: 36px;
+}
+.pure-button-primary {
+  /*
+  background-color: #428bca !important;
+  */
+}
+#logo {
+  flex: auto;
+  margin-left: 15px;
+  font-size: 20px;
+  color: #fff;
+}
+#autoRefresh {
+  margin-right: 15px;
+}
+#autoRefresh a {
+  font-size: 16px;
+  color: #fff;
+}
+
+.linkBlocks {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 5px;
+  margin-top: 10px;
+}
+.linkBlock {
+  margin: 2px 5px;
+}
+.divider {
+  margin: 2px 5px;
+  padding: 3px 4px;
+  color: #999;
+  line-height: 150%;
+}
+
+.container {
+  min-width: 200px;
+  height: 300px;
+  margin: 0 10px 0 10px;
+}
+
+@media screen and (max-width: 800px) {
+  .smallScreen {
+    display: none;
+  }
+  .highcharts-title {
+    font-size: 14px !important;
+  }
+}
+</style>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  console.time('container_loadavg');
+  var chart = echarts.init(document.getElementById('container_loadavg'));
+
+  var option = {
+    title: {
+      text: 'Loadavg (Avg)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value.toFixed(2);
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+      max: function(value) {
+        return (value.max > {{$.Host.cpu_processors}}) ? null : {{$.Host.cpu_processors}};
+      },
+    },
+    series: [
+      {{ range $value := $.HostMetric.loadavg_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+        'markLine': {
+          'symbol': 'none',
+          'silent': true,
+          'label': {
+            'show': false,
+          },
+          'data': [{
+            'yAxis': {{$.Host.cpu_processors}},
+            'lineStyle': {
+              'color': '#e06043',
+            },
+          }],
+        },
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+  console.timeEnd('container_loadavg');
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  console.time('container_cpu_usage');
+  var chart = echarts.init(document.getElementById('container_cpu_usage'));
+
+  var option = {
+    title: {
+      text: 'CPU Usage (%)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value.toFixed(2) + '%';
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+      max: 100,
+    },
+    series: [
+      {{ range $value := $.HostMetric.cpu_usage_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+        'markLine': {
+          'symbol': 'none',
+          'silent': true,
+          'label': {
+            'show': false,
+          },
+          'data': [{
+            'yAxis': 80,
+            'lineStyle': {
+              'color': '#e06043',
+            },
+          }],
+        },
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+  console.timeEnd('container_cpu_usage');
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  console.time('container_mem_usage');
+  var chart = echarts.init(document.getElementById('container_mem_usage'));
+
+  var option = {
+    title: {
+      text: 'Mem Usage (%)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value.toFixed(2) + '%';
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+      max: 100,
+    },
+    series: [
+      {{ range $value := $.HostMetric.mem_usage_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+        'markLine': {
+          'symbol': 'none',
+          'silent': true,
+          'label': {
+            'show': false,
+          },
+          'data': [{
+            'yAxis': 80,
+            'lineStyle': {
+              'color': '#e06043',
+            },
+          }],
+        },
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+  console.timeEnd('container_mem_usage');
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  console.time('container_disk_usage');
+  var chart = echarts.init(document.getElementById('container_disk_usage'));
+
+  var option = {
+    title: {
+      text: 'Disk Usage (%)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value.toFixed(2) + '%';
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+      max: 100,
+    },
+    series: [
+      {{ range $value := $.HostMetric.disk_usage_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+        'markLine': {
+          'symbol': 'none',
+          'silent': true,
+          'label': {
+            'show': false,
+          },
+          'data': [{
+            'yAxis': 80,
+            'lineStyle': {
+              'color': '#e06043',
+            },
+          }],
+        },
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  console.time('container_disk_io_rate');
+  var chart = echarts.init(document.getElementById('container_disk_io_rate'));
+
+  var option = {
+    title: {
+      text: 'Disk I/O Rate (KiB/s)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value + ' KiB/s';
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+    },
+    series: [
+      {{ range $value := $.HostMetric.disk_io_rate_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  var chart = echarts.init(document.getElementById('container_nic_io_rate'));
+
+  var option = {
+    title: {
+      text: 'NIC I/O Rate (KiB/s)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: function(value) {
+        return value.toFixed(2) + ' KiB/s';
+      },
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+    },
+    series: [
+      {{ range $value := $.HostMetric.nic_io_rate_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  var chart = echarts.init(document.getElementById('container_tcp_sockets'));
+
+  var option = {
+    title: {
+      text: 'TCP Sockets (Count)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+    },
+    series: [
+      {{ range $value := $.HostMetric.tcp_sockets_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  var chart = echarts.init(document.getElementById('container_misc'));
+
+  var option = {
+    title: {
+      text: 'Misc (Count)',
+      textStyle: {
+        fontWeight: 'normal',
+      },
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    legend: {
+      bottom: 0,
+    },
+    grid: {
+      top: 40,
+      right: 10,
+      bottom: 30,
+      left: 10,
+      containLabel: true,
+    },
+    animation: false,
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: {{$.HostMetric.heartbeat_time_array}},
+    },
+    yAxis: {
+      type: 'value',
+      nameLocation: 'middle',
+      nameTextStyle: {
+        padding: [0, 0, 10, 0],
+      },
+      minInterval: 1,
+      min: 0,
+    },
+    series: [
+      {{ range $value := $.HostMetric.misc_array }}
+      {
+        'name': {{ $value.name }},
+        'data': {{ $value.data }},
+        'type': 'line',
+        'smooth': true,
+        'symbol': 'none',
+        'lineStyle': {
+          'width': 1.5,
+        },
+        'zlevel': 5,
+      },
+      {{ end }}
+    ],
+  };
+
+  chart.setOption(option);
+
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
+});
+</script>
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function(event) {
+  var scrollPosition = sessionStorage.getItem('scrollPosition');
+  if (scrollPosition !== null) {
+    window.scrollTo(0, scrollPosition);
+  }
+});
+window.onbeforeunload = function(event) {
+  sessionStorage.setItem('scrollPosition', window.scrollY);
+};
+</script>
+</head>
+
+<body>
+{{ if ne $.State.mode "1" }}
+<div id="header">
+  <div id="logo">
+    <a href="/" style="color: #fff">Linux Monitor</a>
+  </div>
+  <div id="autoRefresh">
+    <a href="javascript:;" id="enableAutoRefresh" style="display: none">Enable Auto Refresh</a>
+    <a href="javascript:;" id="disableAutoRefresh" style="display: inline-block">Disable Auto Refresh</a>
+  </div>
+</div>
+{{ end }}
+
+<div style="margin-top: 12px"></div>
+
+<!--
+OS ---------- OS Type
+Arch -------- Architecture
+CPU --------- CPU Processors
+Mem (G) ----- Mem Size (G)
+Disk (G) ---- Disk Size (G)
+Report Time - Heartbeat Time
+-->
+
+<div class="divBlock">
+  <table class="pure-table pure-table-bordered">
+    <thead>
+      <tr class="tableHeaderx">
+        <th class="largeScreen">Hostname</th>
+        <th class="largeScreen">IP</th>
+        <th class="smallScreen">OS</th>
+        <th class="smallScreen">Arch</th>
+        <th class="largeScreen">Loadavg</th>
+        <th class="smallScreen">CPU</th>
+        <th class="smallScreen">Mem (G)</th>
+        <th class="smallScreen">Disk (G)</th>
+        <th class="smallScreen">Users</th>
+        <th class="smallScreen">Uptime (d)</th>
+        <th class="smallScreen">Report Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range $host := $.Hosts }}
+      {{ if or (eq $host.id $.Host.id) (ne $.State.mode "1") }}
+      <tr {{ if eq $host.id $.Host.id }}class="pure-table-odd"{{ end }}>
+        <td class="largeScreen">
+          {{ if eq $host.id $.Host.id }}
+          <span style="font-weight: 600">&check;</span>
+          {{ end }}
+          <a href="/?id={{$host.id}}">{{$host.hostname}}</a>
+        </td>
+        <td class="largeScreen">
+          <a href="/?id={{$host.id}}">
+            {{ range $ip := $host.ips }}{{ $ip }}<br />{{ end }}
+          </a>
+        </td>
+        <td class="smallScreen">{{$host.os_type}}</td>
+        <td class="smallScreen">{{$host.architecture}}</td>
+        <td>
+          {{ if eq $host.is_overload false }}
+          <span style="color: #095720">{{$host.loadavg}}</span>
+          {{ else }}
+          <span style="color: #e06043">{{$host.loadavg}}</span>
+          {{ end }}
+        </td>
+        <td class="smallScreen">
+          {{ if eq $host.is_overcpu false }}
+          <span style="color: #095720">{{$host.cpu_processors}} ({{$host.cpu_usage}}%)</span>
+          {{ else }}
+          <span style="color: #e06043">{{$host.cpu_processors}} ({{$host.cpu_usage}}%)</span>
+          {{ end }}
+        </td>
+        <td class="smallScreen">
+          {{ if eq $host.is_overmem false }}
+          <span style="color: #095720">{{$host.mem_size}} ({{$host.mem_usage}}%)</span>
+          {{ else }}
+          <span style="color: #e06043">{{$host.mem_size}} ({{$host.mem_usage}}%)</span>
+          {{ end }}
+        </td>
+        <td class="smallScreen">
+          {{ if eq $host.is_overdisk false }}
+          <span style="color: #095720">{{$host.disk_size}} ({{$host.disk_usage}}%)</span>
+          {{ else }}
+          <span style="color: #e06043">{{$host.disk_size}} ({{$host.disk_usage}}%)</span>
+          {{ end }}
+        </td>
+        <td class="smallScreen">{{$host.users}}</td>
+        <td class="smallScreen">{{$host.uptime}}</td>
+        <td class="smallScreen">{{$host.heartbeat_time}}</td>
+      </tr>
+      {{ end }}
+      {{ end }}
+    </tbody>
+  </table>
+</div>
+
+<div class="linkBlocks">
+  {{ if ne $.State.mode "1" }}
+  {{ range $project := $.Projects }}
+  <a class="linkBlock pure-button {{ if eq $.Host.project $project.code }} pure-button-primary {{ end }}" href="/?project={{$project.code}}">{{ $project.name }}</a>
+  {{ end }}
+  {{ end }}
+
+  {{ if ne $.State.mode "1" }}
+  {{ if ne (len $.Projects) 0 }}
+  <div class="divider">|</div>
+  {{ end }}
+  {{ end }}
+
+  <a class="linkBlock pure-button {{ if eq $.State.offset 10 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=10">10 MINS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 30 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=30">30 MINS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 60 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=60">1 HOUR</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 240 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=240">4 HOURS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 480 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=480">8 HOURS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 720 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=720">12 HOURS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 1440 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=1440">1 DAY</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 2880 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=2880">2 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 4320 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=4320">3 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 5760 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=5760">4 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 7200 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=7200">5 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 10080 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=10080">7 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 21600 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=21600">15 DAYS</a>
+  <a class="linkBlock pure-button {{ if eq $.State.offset 44640 }} pure-button-primary {{ end }}" href="/?id={{$.Host.id}}&offset=44640">31 DAYS</a>
+</div>
+
+<div style="margin-top: 15px"></div>
+
+<div>
+  <a id="loadavg"></a>
+  <div id="container_loadavg" class="container"></div>
+  <a id="cpu_usage"></a>
+  <div id="container_cpu_usage" class="container"></div>
+  <a id="mem_usage"></a>
+  <div id="container_mem_usage" class="container"></div>
+  <a id="disk_usage"></a>
+  <div id="container_disk_usage" class="container"></div>
+  <a id="disk_io_rate"></a>
+  <div id="container_disk_io_rate" class="container"></div>
+  <a id="nic_io_rate"></a>
+  <div id="container_nic_io_rate" class="container"></div>
+  <a id="tcp_sockets"></a>
+  <div id="container_tcp_sockets" class="container"></div>
+  <a id="misc"></a>
+  <div id="container_misc" class="container"></div>
+</div>
+
+<div style="margin-top: 10px"></div>
+
+<script type="text/javascript">
+var timeout;
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem('autoRefresh') !== '0') {
+    enableAutoRefresh();
+  } else {
+    disableAutoRefresh();
+  }
+});
+
+document.getElementById('enableAutoRefresh').addEventListener('click', function(event) {
+  event.preventDefault();
+  localStorage.setItem('autoRefresh', '1');
+  window.location.reload(true);
+  return false;
+});
+
+document.getElementById('disableAutoRefresh').addEventListener('click', function(event) {
+  event.preventDefault();
+  localStorage.setItem('autoRefresh', '0');
+  window.location.reload(true);
+  return false;
+});
+
+function enableAutoRefresh() {
+  console.log('enableAutoRefresh');
+  timeout = window.setTimeout(function() {
+    window.location.reload(true);
+  }, 60000);
+  document.getElementById('enableAutoRefresh').style.display = 'none';
+  document.getElementById('disableAutoRefresh').style.display = 'inline-block';
+  localStorage.setItem('autoRefresh', '1');
+}
+
+function disableAutoRefresh() {
+  console.log('disableAutoRefresh');
+  clearTimeout(timeout);
+  document.getElementById('enableAutoRefresh').style.display = 'inline-block';
+  document.getElementById('disableAutoRefresh').style.display = 'none';
+  localStorage.setItem('autoRefresh', '0');
+}
+</script>
+</body>
+</html>

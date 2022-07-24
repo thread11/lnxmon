@@ -1,0 +1,26 @@
+-- Upstream
+https://github.com/mattn/go-sqlite3/releases/tag/v1.14.12
+https://code.highcharts.com/9.3.3/highcharts.js
+https://code.highcharts.com/9.3.3/modules/boost.js
+
+
+
+-- Start
+GO111MODULE=off go run lnxmonsrv.go
+GO111MODULE=off go run lnxmoncli.go
+
+
+
+-- Build
+wget "https://go.dev/dl/go1.17.8.linux-amd64.tar.gz"
+tar xzvf go1.17.8.linux-amd64.tar.gz
+export PATH=${PATH}:/root/go/bin
+go version
+
+yum install git
+git clone https://github.com/thread5/lnxmon
+
+yum install gcc
+yum install glibc-static
+cd lnxmon
+bash build.sh

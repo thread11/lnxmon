@@ -1,0 +1,14 @@
+/**/*.log
+
+/build/
+
+/lib/go-sqlite3/
+
+/lnxmon.db
+/lnxmon.db-journal
+
+/lnxmoncli
+/lnxmonsrv
+
+/static/echarts.min.js
+/static/pure-min.css

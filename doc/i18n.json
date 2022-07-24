@@ -1,0 +1,194 @@
+{
+  "title": {
+    "linux_monitor": {
+      "en_US": "Linux Monitor",
+      "zh_CN": "Linux 监控"
+    }
+  },
+  "host": {
+    "hostname": {
+      "en_US": "Hostname",
+      "zh_CN": "主机名"
+    },
+    "ip": {
+      "en_US": "IP",
+      "zh_CN": "IP"
+    },
+    "os": {
+      "en_US": "OS",
+      "zh_CN": "操作系统"
+    },
+    "arch": {
+      "en_US": "Arch",
+      "zh_CN": "架构"
+    },
+    "loadavg": {
+      "en_US": "Loadavg",
+      "zh_CN": "负载"
+    },
+    "cpu": {
+      "en_US": "CPU",
+      "zh_CN": "CPU"
+    },
+    "mem_g": {
+      "en_US": "Mem (G)",
+      "zh_CN": "内存（G）"
+    },
+    "disk_g": {
+      "en_US": "Disk (G)",
+      "zh_CN": "磁盘（G）"
+    },
+    "users": {
+      "en_US": "Users",
+      "zh_CN": "在线用户"
+    },
+    "uptime_d": {
+      "en_US": "Uptime (d)",
+      "zh_CN": "运行时长（天）"
+    },
+    "report_time": {
+      "en_US": "Report Time",
+      "zh_CN": "上报时间"
+    }
+  },
+  "time_shift": {
+    "_10_mins": {
+      "en_US": "10 MINS",
+      "zh_CN": "10 分钟"
+    },
+    "_30_mins": {
+      "en_US": "30 MINS",
+      "zh_CN": "30 分钟"
+    },
+    "_1_hour": {
+      "en_US": "1 HOUR",
+      "zh_CN": "1 小时"
+    },
+    "_4_hours": {
+      "en_US": "4 HOURS",
+      "zh_CN": "4 小时"
+    },
+    "_8_hours": {
+      "en_US": "8 HOURS",
+      "zh_CN": "8 小时"
+    },
+    "_12_hours": {
+      "en_US": "12 HOURS",
+      "zh_CN": "12 小时"
+    },
+    "_1_day": {
+      "en_US": "1 DAY",
+      "zh_CN": "1 天"
+    },
+    "_2_days": {
+      "en_US": "2 DAYS",
+      "zh_CN": "2 天"
+    },
+    "_3_days": {
+      "en_US": "3 DAYS",
+      "zh_CN": "3 天"
+    },
+    "_4_days": {
+      "en_US": "4 DAYS",
+      "zh_CN": "4 天"
+    },
+    "_5_days": {
+      "en_US": "5 DAYS",
+      "zh_CN": "5 天"
+    },
+    "_7_days": {
+      "en_US": "7 DAYS",
+      "zh_CN": "7 天"
+    },
+    "_15_days": {
+      "en_US": "15 DAYS",
+      "zh_CN": "15 天"
+    },
+    "_31_days": {
+      "en_US": "31 DAYS",
+      "zh_CN": "31 天"
+    }
+  },
+  "host_metric": {
+    "loadavg": {
+      "loadavg": {
+        "en_US": "Loadavg",
+        "zh_CN": "负载"
+      },
+      "average": {
+        "en_US": "Average",
+        "zh_CN": "均值"
+      }
+    },
+    "cpu_usage": {
+      "cpu_usage": {
+        "en_US": "CPU Usage",
+        "zh_CN": "CPU 使用率"
+      },
+      "percentage_010": {
+        "en_US": "Percentage (%)",
+        "zh_CN": "百分比（%）"
+      }
+    },
+    "mem_usage": {
+      "mem_usage": {
+        "en_US": "Mem Usage",
+        "zh_CN": "内存使用率"
+      },
+      "percentage_010": {
+        "en_US": "Percentage (%)",
+        "zh_CN": "百分比（%）"
+      }
+    },
+    "disk_usage": {
+      "disk_usage": {
+        "en_US": "Disk Usage",
+        "zh_CN": "磁盘使用率"
+      },
+      "percentage_010": {
+        "en_US": "Percentage (%)",
+        "zh_CN": "百分比（%）"
+      }
+    },
+    "disk_io_rate": {
+      "disk_io_rate": {
+        "en_US": "Disk I/O Rate",
+        "zh_CN": "磁盘读写速率"
+      },
+      "traffic_kibs": {
+        "en_US": "Traffic (KiB/s)",
+        "zh_CN": "流量（KiB/秒）"
+      }
+    },
+    "nic_io_rate": {
+      "nic_io_rate": {
+        "en_US": "NIC I/O Rate",
+        "zh_CN": "网卡读写速率"
+      },
+      "traffic_kibs": {
+        "en_US": "Traffic (KiB/s)",
+        "zh_CN": "流量（KiB/秒）"
+      }
+    },
+    "tcp_sockets": {
+      "tcp_sockets": {
+        "en_US": "TCP Sockets",
+        "zh_CN": "TCP 连接数"
+      },
+      "number": {
+        "en_US": "Number",
+        "zh_CN": "数量"
+      }
+    },
+    "misc": {
+      "misc": {
+        "en_US": "Misc",
+        "zh_CN": "其它"
+      },
+      "number": {
+        "en_US": "Number",
+        "zh_CN": "数量"
+      }
+    }
+  }
+}
